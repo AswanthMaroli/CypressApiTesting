@@ -9,12 +9,12 @@ describe('Api Testing in the eventzet dashboard component', () => {
   
     it('GetDashBoardWrapper', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+        
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventDashboardWrapper/GetDashBoardWrapper?StartDate=&EndDate=&DateToday=10-21-2024&Months=10&UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                     'Authorization': `Bearer ${Cypress.env('authToken')}`
                 },
                 timeout: 60000
             }).then((response) => {
@@ -23,7 +23,7 @@ describe('Api Testing in the eventzet dashboard component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+   
 
     
 

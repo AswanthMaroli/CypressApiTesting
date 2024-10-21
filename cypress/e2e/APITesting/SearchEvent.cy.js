@@ -17,7 +17,7 @@ describe('Api Testing in the Search Event component', ()=>{
             TicketType    : "TicketType"
          }
 
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+       
         cy.request(
 
             {
@@ -25,7 +25,7 @@ describe('Api Testing in the Search Event component', ()=>{
                    url   :'https://testservices.eventzet.com/api/EventSearchWrapper/GetEventSearchWrapper',
                    body  :requestBody,
                    headers: {
-                    'Authorization': `Bearer ${token}`
+                     'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response)=>{
    
@@ -40,5 +40,3 @@ describe('Api Testing in the Search Event component', ()=>{
     });
 
     
-
-})

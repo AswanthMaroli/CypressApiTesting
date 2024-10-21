@@ -10,12 +10,12 @@ describe('Api Testing in the eventzet my volunteer signup component', () => {
   
     it('GetRegisteredSignUpList', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+    
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/RegisteredSignupList/GetRegisteredSignUpList?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -26,7 +26,7 @@ describe('Api Testing in the eventzet my volunteer signup component', () => {
                 expect(firstObject.SignUpRegID).to.be.a('number');
                 expect(firstObject.SignUpID).to.be.a('number');
                 
-            });
+        
         });
     });
 

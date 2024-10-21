@@ -10,12 +10,12 @@ describe('Api Testing in the eventzet Account Settings component', () => {
   
     it('GetCategoryByTypeName?CategoryTypeName=LoginType', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+       
             cy.request({
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=LoginType',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -23,16 +23,15 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
 
     it('GetCategoryByTypeName?CategoryTypeName=Gender', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+    
             cy.request({
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=Gender',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -40,16 +39,16 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+ 
 
     it('GetCategoryByTypeName?CategoryTypeName=State', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+      
             cy.request({
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=State',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                 'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -57,16 +56,14 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
 
     it('GetAccountDetails', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                   'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -74,13 +71,8 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
+
     });
 
 
-   
 
-
-  
-  
-
-});

@@ -10,12 +10,12 @@ describe('Api Testing in the eventzet booking list component', () => {
   
     it('GetEventList', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+       
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/BookingList/GetEventList?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                 'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -23,16 +23,16 @@ describe('Api Testing in the eventzet booking list component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+   
 
     it('GetOrderDetails', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+   
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/BookingList/GetOrderDetails?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                  'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -40,13 +40,6 @@ describe('Api Testing in the eventzet booking list component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
 
-
-   
-
-
-  
-  
 
 });

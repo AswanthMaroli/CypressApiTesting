@@ -10,12 +10,12 @@ describe('Api Testing in the eventzet Pricing component', () => {
 
     it('GetPricingDetails', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+ 
             cy.request({
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Pricing/GetPricingDetails',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                   'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -23,17 +23,17 @@ describe('Api Testing in the eventzet Pricing component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+    
 
 
     it('GetAccountDetails', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+     
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                     'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -41,17 +41,17 @@ describe('Api Testing in the eventzet Pricing component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+    
 
 
     it('GetAddOnPricingDetails', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+   
             cy.request({
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Pricing/GetAddOnPricingDetails',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                     'Authorization': `Bearer ${Cypress.env('authToken')}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -62,4 +62,4 @@ describe('Api Testing in the eventzet Pricing component', () => {
     });
   
 
-});
+
