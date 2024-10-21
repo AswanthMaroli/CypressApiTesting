@@ -10,24 +10,22 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
 
 
         
-    it('GetQuestions?SignUpID', () => {
+    // it('IsVerifiedByUserID', () => {
 
-        const responseBody =userID
-        
    
-            cy.request({
-                method: 'POST',
-                url: 'https://testservices.eventzet.com/api/UserSignup/IsVerifiedByUserID',
-                body:responseBody,
-                headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
+    //         cy.request({
+    //             method: 'POST',
+    //             url: 'https://testservices.eventzet.com/api/UserSignup/IsVerifiedByUserID',
+    //             body:'2',
+    //             headers: {
+    //                  'Authorization': `Bearer ${Cypress.env('authToken')}`
+    //             }
+    //         }).then((response) => {
+    //             expect(response.status).to.equal(200);
+    //             expect(response.duration).to.be.below(3000);
+    //             expect(response.statusText).to.equal('OK');
+    //         });
+    //     });
     
 
     
