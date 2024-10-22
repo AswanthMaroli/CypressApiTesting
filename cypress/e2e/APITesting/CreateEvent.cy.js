@@ -1,14 +1,21 @@
 describe('Api Testing in the eventzet Create Event component', () => {
 
-    let eventID = '';
+    let eventID  ;
     let authToken;
     const userID=2;
+    let venueID;
+    let levelID;
+    let timeSlotID;
+    let ticketID;
+    let addonID;
+
     before(() => {
-      
         cy.getToken().then((token) => {
-            authToken = token; // Store retrieved token for authorization
+          authToken = token; // Store retrieved token for authorization
+          cy.log('Auth Token:', authToken); // Log the token to confirm it's retrieved
         });
-    });
+      });
+      
 
 
 
@@ -20,8 +27,8 @@ describe('Api Testing in the eventzet Create Event component', () => {
             "EventOwnershipModeID": 450,
             "EventOwnershipMode": "",
             "EventOwner": 0,
-            "EventCreator": 5,
-            "Title": "Tarang 2.0",
+            "EventCreator": userID,
+            "Title": "Music Night",
             "City": "",
             "OrganizerTypeID": 372,
             "OrganizerType": "",
@@ -30,13 +37,13 @@ describe('Api Testing in the eventzet Create Event component', () => {
             "EventType": "",
             "EventCategoryID": 33,
             "EventCategory": "",
-            "EventSubCategoryID": 67,
+            "EventSubCategoryID": 68,
             "EventSubCategory": "",
-            "EventModeID": 42,
+            "EventModeID": 0,
             "EventMode": "",
-            "VenueLocation": "Austin, TX, USA",
-            "lat": 30.267153,
-            "lng": -97.7430608,
+            "VenueLocation": "",
+            "lat": 0,
+            "lng": 0,
             "OnlineEventUrl": "",
             "OnlineEventInstructions": "",
             "EventTags": [
@@ -47,16 +54,16 @@ describe('Api Testing in the eventzet Create Event component', () => {
               }
             ],
             "ReservedSeat": false,
-            "EventStartTime": "2/1/1900 3:00:00 PM",
-            "EventEndTime": "2/1/1900 11:00:00 PM",
+            "EventStartTime": null,
+            "EventEndTime": null,
             "DisplayStartTime": false,
             "DisplayEndTime": false,
             "TimeZone": "",
-            "TimeZoneID": 286,
-            "Description": "Austin City Tarang Festival",
+            "TimeZoneID": 0,
+            "Description": "Music Night - 2024",
             "OrganizerEmail": "aswanthm385@gmail.com",
-            "OrganizerPhone": "90980890890",
-            "ModifiedUser": 5,
+            "OrganizerPhone": "9097978978",
+            "ModifiedUser": userID,
             "ModeChecked": false,
             "IsBasicInfoSaved": true,
             "RefundRequst": false,
@@ -64,17 +71,17 @@ describe('Api Testing in the eventzet Create Event component', () => {
             "CreatedBy": 0,
             "Postedby": "",
             "ImageUrl": "",
-            "EventStartDate": "7/13/2024 12:00:00 AM",
-            "EventEndDate": "7/13/2024 12:00:00 AM"
+            "EventStartDate": "10/26/2024 12:00:00 AM",
+            "EventEndDate": "10/28/2024 12:00:00 AM"
           };
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+          
+        
             cy.request({
                 method: 'POST',
                 url: 'https://testservices.eventzet.com/api/BasicInfo/SaveEvent',
                 body: reqBody,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 },
                 timeout: 60000
             }).then((response) => {
@@ -86,17 +93,99 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 cy.log(eventID);
             });
         });
-    });
 
-    
-    it('GetCategoryByTypeName?CategoryTypeName=EventDataType', () => {
+
+
+        it('SaveEventVenues', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+            const reqBody= {
+                "EventID": eventID,
+                "ModifiedUser": userID,
+                "VenueMode": 42,
+                "EventVenueDetail": [
+                  {
+                    "VenueID": 0,
+                    "VenueUID": "bc2e4ee0-0bdd-4c5f-b680-a453fa63b799",
+                    "EventID": 0,
+                    "VenueMode": 42,
+                    "ToBeAnnounced": false,
+                    "VenueName": "Texas, USA",
+                    "VenueAddress": "Texas city hall",
+                    "City": "",
+                    "Country": "",
+                    "LocationID": 0,
+                    "LocationUID": "",
+                    "Latitude": 31.9685988,
+                    "Longitude": -99.9018131,
+                    "Title": "",
+                    "OnlineEventURL": "",
+                    "Instructions": "",
+                    "ModifiedUser": userID
+                  }
+                ]
+              };
+              
+            
+                cy.request({
+                    method: 'POST',
+                    url: 'https://testservices.eventzet.com/api/Venues/SaveEventVenues',
+                    body: reqBody,
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    timeout: 60000
+                }).then((response) => {
+                    expect(response.status).to.equal(200);
+                    expect(response.duration).to.be.below(6000);
+                    expect(response.statusText).to.equal('OK');
+                    expect(response.body).to.have.property('ID').and.not.eq(0);
+                });
+            });
+    
+
+
+
+    it('GetEventDataByEventID?EventID', () => {
+        
             cy.request({
                 method: 'GET',
-                url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=EventDataType',
+                url: `https://testservices.eventzet.com/api/EventRegistration/GetEventDataByEventID?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+                expect(response.body.EventDetails).to.have.property('EventID').eq(eventID);
+            });
+        });
+
+        
+    it('GetCategoryByTypeName?CategoryTypeName', () => {
+        
+        cy.request({
+            method: 'GET',
+            url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=EventMode',
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+            expect(response.body[0]).to.have.property('ID').and.not.eq(0);
+        });
+    });
+
+
+        it('GetEventVenues?EventID', () => {
+        
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/Venues/GetEventVenues?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -105,34 +194,220 @@ describe('Api Testing in the eventzet Create Event component', () => {
               
             });
         });
-    });
 
-    it('GetEventDetails?EventID', () => {
+        // save city
+
+        it('SaveEventVenues', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/BasicInfo/GetEventDetails?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
+            const reqBody= {
+                "EventID": eventID,
+                "ModifiedUser": userID,
+                "VenueMode": 42,
+                "EventVenueDetail": [
+                  {
+                    "VenueID": 0,
+                    "VenueUID": "8d493d63-0832-44aa-bb01-692fdf8e3198",
+                    "EventID": 0,
+                    "VenueMode": 42,
+                    "ToBeAnnounced": true,
+                    "VenueName": "",
+                    "VenueAddress": "",
+                    "City": "Dallas",
+                    "Country": "",
+                    "LocationID": 0,
+                    "LocationUID": "",
+                    "Latitude": 0,
+                    "Longitude": 0,
+                    "Title": "",
+                    "OnlineEventURL": "",
+                    "Instructions": "",
+                    "ModifiedUser": userID
+                  }
+                ]
+              };
+              
+            
+                cy.request({
+                    method: 'POST',
+                    url: 'https://testservices.eventzet.com/api/Venues/SaveEventVenues',
+                    body: reqBody,
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    timeout: 60000
+                }).then((response) => {
+                    expect(response.status).to.equal(200);
+                    expect(response.duration).to.be.below(6000);
+                    expect(response.statusText).to.equal('OK');
+                    expect(response.body).to.have.property('ID').and.not.eq(0);
+                    
+                });
             });
-        });
-    });
+
+            it('GetEventDataByEventID?EventID', () => {
+        
+                cy.request({
+                    method: 'GET',
+                    url: `https://testservices.eventzet.com/api/EventRegistration/GetEventDataByEventID?EventID=${eventID}`,
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
+                }).then((response) => {
+                    expect(response.status).to.equal(200);
+                    expect(response.duration).to.be.below(3000);
+                    expect(response.statusText).to.equal('OK');
+                    expect(response.body.EventDetails).to.have.property('EventID').eq(eventID);
+                });
+            });
+
+
+            it('GetEventVenues?EventID', () => {
+        
+                cy.request({
+                    method: 'GET',
+                    url: `https://testservices.eventzet.com/api/Venues/GetEventVenues?EventID=${eventID}`,
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
+                }).then((response) => {
+                    expect(response.status).to.equal(200);
+                    expect(response.duration).to.be.below(3000);
+                    expect(response.statusText).to.equal('OK');
+                    expect(response.body[0]).to.have.property('VenueID').and.not.eq(0);
+                    venueID=response.body[0].VenueID;
+                });
+            });
+
+          // save online 
+
+            it('SaveEventVenues', () => {
+        
+                const reqBody={
+                    "EventID": eventID,
+                    "ModifiedUser": userID,
+                    "VenueMode": 43,
+                    "EventVenueDetail": [
+                      {
+                        "VenueID": 0,
+                        "VenueUID": "8fb8a974-05ff-41f8-b619-e264a7f2bd8c",
+                        "EventID": 0,
+                        "VenueMode": 43,
+                        "ToBeAnnounced": false,
+                        "VenueName": "",
+                        "VenueAddress": "",
+                        "City": "",
+                        "Country": "",
+                        "LocationID": 0,
+                        "LocationUID": "",
+                        "Latitude": 0,
+                        "Longitude": 0,
+                        "Title": "Online Trading Course",
+                        "OnlineEventURL": "zoom link",
+                        "Instructions": "test",
+                        "ModifiedUser": userID
+                      }
+                    ]
+                  };
+                  
+                 
+                
+                    cy.request({
+                        method: 'POST',
+                        url: 'https://testservices.eventzet.com/api/Venues/SaveEventVenues',
+                        body: reqBody,
+                        headers: {
+                            Authorization: `Bearer ${authToken}`
+                        },
+                        timeout: 60000
+                    }).then((response) => {
+                        expect(response.status).to.equal(200);
+                        expect(response.duration).to.be.below(6000);
+                        expect(response.statusText).to.equal('OK');
+                        expect(response.body).to.have.property('ID').and.not.eq(0);
+                    });
+                });
+    
+                it('GetEventDataByEventID?EventID', () => {
+                   
+                    cy.request({
+                        method: 'GET',
+                        url: `https://testservices.eventzet.com/api/EventRegistration/GetEventDataByEventID?EventID=${eventID}`,
+                        headers: {
+                            Authorization: `Bearer ${authToken}`
+                        }
+                    }).then((response) => {
+                        expect(response.status).to.equal(200);
+                        expect(response.duration).to.be.below(3000);
+                        expect(response.statusText).to.equal('OK');
+                        expect(response.body.EventDetails).to.have.property('EventID').eq(eventID);
+                    });
+                });
+    
+    
+                it('GetEventVenues?EventID', () => {
+            
+                    cy.request({
+                        method: 'GET',
+                        url: `https://testservices.eventzet.com/api/Venues/GetEventVenues?EventID=${eventID}`,
+                        headers: {
+                            Authorization: `Bearer ${authToken}`
+                        }
+                    }).then((response) => {
+                        expect(response.status).to.equal(200);
+                        expect(response.duration).to.be.below(3000);
+                        expect(response.statusText).to.equal('OK');
+                        expect(response.body[2]).to.have.property('VenueID').and.not.eq(0);
+                    });
+                });
+
+
+
+                it('SaveEventLevels', () => {
+        
+                    const reqBody={
+                        "ID": 0,
+                        "EventID": eventID,
+                        "ModifiedUser": userID,
+                        "TierList": [
+                          {
+                            "TierID": 0,
+                            "TierName": "Regular",
+                            "DelStatus": false
+                          },
+                          {
+                            "TierID": 0,
+                            "TierName": "Silver",
+                            "DelStatus": false
+                          }
+                        ]
+                      };
+                    
+                      
+                        cy.request({
+                            method: 'POST',
+                            url: 'https://testservices.eventzet.com/api/Levels/SaveEventLevels',
+                            body: reqBody,
+                            headers: {
+                                Authorization: `Bearer ${authToken}`
+                            },
+                            timeout: 60000
+                        }).then((response) => {
+                            expect(response.status).to.equal(200);
+                            expect(response.duration).to.be.below(6000);
+                            expect(response.statusText).to.equal('OK');
+                            expect(response.body).to.have.property('ID').and.not.eq(0);
+                        });
+                    });
 
    
-    it('GetEventStatus?EventID', () => {
+    it('GetEventDates?EventID', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+     
             cy.request({
                 method: 'GET',
-                url: `https://testservices.eventzet.com/api/BasicInfo/GetEventStatus?EventID=${eventID}`,
+                url: `https://testservices.eventzet.com/api/Timeslot/GetEventDates?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -140,34 +415,278 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
+
+        it('GetEventLevels?EventID', () => {
+        
+     
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/Levels/GetEventLevels?EventID=${eventID}`,
+                headers: {
+                   Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+                levelID = response.body[1].TierID;
+            });
+        });
+
+
+
+        it('SaveEventTimeSlots', () => {
+        
+            const reqBody={
+                "ID": 0,
+                "EventID": eventID,
+                "ModifiedUser": userID,
+                "TimeEventSlots": [
+                  {
+                    "SlotID": 0,
+                    "StartDate": "10/26/2024 12:00:00 AM",
+                    "EndDate": "10/26/2024 12:00:00 AM",
+                    "StartTime": "2/1/1900 12:00:00 PM",
+                    "EndTime": "2/1/1900 4:00:00 PM",
+                    "TimeZoneID": 286,
+                    "DelStatus": false
+                  }
+                ]
+              };
+              
+              
+                cy.request({
+                    method: 'POST',
+                    url: 'https://testservices.eventzet.com/api/Timeslot/SaveEventTimeSlots',
+                    body: reqBody,
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    timeout: 60000
+                }).then((response) => {
+                    expect(response.status).to.equal(200);
+                    expect(response.duration).to.be.below(6000);
+                    expect(response.statusText).to.equal('OK');
+                    expect(response.body).to.have.property('ID').and.not.eq(0);
+                });
+            });
+
+
+            
+    it('GetEventDates?EventID', () => {
+        
+     
+        cy.request({
+            method: 'GET',
+            url: `https://testservices.eventzet.com/api/Timeslot/GetEventTimeSlots?EventID=${eventID}`,
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+        });
     });
+
+
+    it('GetPricingDetails', () => {
+        
+     
+        cy.request({
+            method: 'GET',
+            url: 'https://testservices.eventzet.com/api/Pricing/GetPricingDetails',
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+        });
+    });
+
+    it('GetTierList?EventID', () => {
+        
+     
+        cy.request({
+            method: 'GET',
+            url: `https://testservices.eventzet.com/api/AddTicket/GetTierList?EventID=${eventID}`,
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+        });
+    });
+
+    it('GetEventVenues?EventID', () => {
+        
+     
+        cy.request({
+            method: 'GET',
+            url: `https://testservices.eventzet.com/api/Venues/GetEventVenues?EventID=${eventID}`,
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+        });
+    });
+
+    it('GetEventTimeSlots?EventID', () => {
+        
+     
+        cy.request({
+            method: 'GET',
+            url: `https://testservices.eventzet.com/api/Timeslot/GetEventTimeSlots?EventID=${eventID}`,
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+            timeSlotID = response.body[0].SlotID;
+        });
+    });
+
+    it('GetAddOnPricingDetails', () => {
+        
+     
+        cy.request({
+            method: 'GET',
+            url: 'https://testservices.eventzet.com/api/Pricing/GetAddOnPricingDetails',
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.duration).to.be.below(3000);
+            expect(response.statusText).to.equal('OK');
+        });
+    });
+
+
+    it('SaveTicketDetails', () => {
+        
+        const reqBody={
+            "TicketIDPK": 0,
+            "EventID": eventID,
+            "VenueID": venueID,
+            "SlotID": timeSlotID,
+            "TierID": levelID,
+            "TicketTypeID": 275,
+            "PricingID": 2,
+            "TicketName": "Paid Ticket",
+            "StockQuantity": 100,
+            "Quantity": 0,
+            "Price": 10,
+            "TaxRate": 10,
+            "MaximumTickets": 10,
+            "SalesStartDate": "10/22/2024 12:00:00 AM",
+            "SalesStartTime": "2/1/1900 1:05:00 PM",
+            "SalesEndDate": "10/24/2024 12:00:00 AM",
+            "SalesEndTime": "2/1/1900 5:05:00 PM",
+            "ShowDatesatCheckout": true,
+            "ModifiedUser": userID
+          };
+          
+          
+          
+            cy.request({
+                method: 'POST',
+                url: 'https://testservices.eventzet.com/api/AddTicket/SaveTicketDetails',
+                body: reqBody,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                },
+                timeout: 60000
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(6000);
+                expect(response.statusText).to.equal('OK');
+                expect(response.body).to.have.property('ID').and.not.eq(0);
+            });
+        });
+    
+    
 
      
-    it('GetBannerImageInfo?EventID', () => {
+    it('GetTicketList?EventID', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+        
             cy.request({
                 method: 'GET',
-                url: `https://testservices.eventzet.com/api/EventDetails/GetBannerImageInfo?EventID=${eventID}`,
+                url: `https://testservices.eventzet.com/api/AddTicket/GetTicketList?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
                 expect(response.duration).to.be.below(3000);
                 expect(response.statusText).to.equal('OK');
+                ticketID = response.body[0].TicketIDPK;
             });
         });
-    });
+
+
+
+    it('SaveAddOnTicketDetails', () => {
+        
+        const reqBody={
+            "AddOnID": 0,
+            "EventID": eventID,
+            "TicketID": ticketID,
+            "TierID": 0,
+            "AddOnName": "Paid Addon",
+            "StockQuantity": 100,
+            "AvailableQuantity": 0,
+            "Quantity": 0,
+            "Price": 10,
+            "PricingID": 2,
+            "PricingDetailsID": 2,
+            "AddOnTypeID": 616,
+            "TaxRate": 10,
+            "MaximumAddOns": 10,
+            "Description": "",
+            "ModifiedUser": userID,
+            "DelStatus": false
+          };
+          
+          
+          
+          
+            cy.request({
+                method: 'POST',
+                url: 'https://testservices.eventzet.com/api/TicketAddOn/SaveAddOnTicketDetails',
+                body: reqBody,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                },
+                timeout: 60000
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(6000);
+                expect(response.statusText).to.equal('OK');
+                expect(response.body).to.have.property('ID').and.not.eq(0);
+            });
+        });
+
+
     
-    it('GetVideoInfo?EventID', () => {
+    it('GetTicketAddOnList?EventID', () => {
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+    
             cy.request({
                 method: 'GET',
-                url: `https://testservices.eventzet.com/api/EventDetails/GetVideoInfo?EventID=${eventID}`,
+                url: `https://testservices.eventzet.com/api/TicketAddOn/GetTicketAddOnList?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -175,29 +694,11 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+    
 
-    it('GetSubimageList?EventID', () => {
-        
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/EventRegistration/GetSubimageList?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-
-    // Event Details
 
     it('UploadBannerImage', () => {
+        
         const filePath = 'austin-city-limits.jpg';
         
 
@@ -206,29 +707,25 @@ describe('Api Testing in the eventzet Create Event component', () => {
             const formData = new FormData();
             formData.append('files', Cypress.Blob.binaryStringToBlob(fileContent), filePath);
             formData.append('EventID', eventID); 
-
-           
-            cy.wrap(Cypress.env('authToken')).then((token) => {
-              
-                cy.request({
-                    method: 'POST',
-                    url: 'https://testservices.eventzet.com/api/EventUploader/UploadBannerImage',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryVfByVvPaBlemrIpy', 
-                    },
-                    body: formData,
-                    timeout: 60000,
-                }).then((response) => {
-                    expect(response.status).to.equal(200);
-                    expect(response.duration).to.be.below(3000);
-                    expect(response.statusText).to.equal('OK');
-               
-                });
-               
+          
+            cy.request({
+                method: 'POST',
+                url: 'https://testservices.eventzet.com/api/EventUploader/UploadBannerImage',
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryVfByVvPaBlemrIpy', 
+                },
+                body: formData,
+                timeout: 60000,
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(6000);
+                expect(response.statusText).to.equal('OK');
+                expect(response.body).to.have.property('message').and.include('Files uploaded Successfully');
             });
         });
     });
+
 
       it('UploadSubImages', () => {
         const filePath = '20210905_0378-1-scaled.jpg';
@@ -240,14 +737,12 @@ describe('Api Testing in the eventzet Create Event component', () => {
             formData.append('files', Cypress.Blob.binaryStringToBlob(fileContent), filePath);
             formData.append('EventID', eventID); 
 
-           
-            cy.wrap(Cypress.env('authToken')).then((token) => {
-              
+      
                 cy.request({
                     method: 'POST',
                     url: 'https://testservices.eventzet.com/api/EventUploader/UploadSubImages',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        Authorization: `Bearer ${authToken}`,
                         'Content-Type': 'multipart/form-data;  boundary=----WebKitFormBoundaryqaCndmbDPQwvMEvB', 
                     },
                     body: formData,
@@ -261,7 +756,7 @@ describe('Api Testing in the eventzet Create Event component', () => {
                
             });
         });
-    });
+
 
 
 
@@ -271,15 +766,15 @@ describe('Api Testing in the eventzet Create Event component', () => {
             EventDetailsIDPK:0,
             EventID:eventID,
             IsEventDetailsSaved:true,
-            ModifiedUser:5}
+            ModifiedUser:userID}
         
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+      
             cy.request({
                 method: 'POST',
                 url: 'https://testservices.eventzet.com/api/EventDetails/SaveEventDetails',
                 body:reqBody,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -287,7 +782,7 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
+
 
 
     it('GetEventDetails?EventID', () => {
@@ -307,14 +802,39 @@ describe('Api Testing in the eventzet Create Event component', () => {
         });
     });
 
-    it('GetTierList?EventID', () => {
 
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+    it('SaveVideoURL', () => {
+
+        const reqBody = {
+            "EventID": eventID,
+            "ModifiedUser": userID,
+            "Videos": [
+              {
+                "EventDetailsIDPK": 0,
+                "VideoURL": "https://www.youtube.com/watch?v=gPpQNzQP6gE",
+                "VideoTypeID": 617
+              },
+              {
+                "EventDetailsIDPK": 0,
+                "VideoURL": "https://vimeo.com/1002833698",
+                "VideoTypeID": 619
+              },
+              {
+                "EventDetailsIDPK": 0,
+                "VideoURL": "https://rumble.com/embed/v5bdflh/?pub=4",
+                "VideoTypeID": 618
+              }
+            ]
+          }
+          
+        
+      
             cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/AddTicket/GetTierList?EventID=${eventID}`,
+                method: 'POST',
+                url: 'https://testservices.eventzet.com/api/EventDetails/SaveVideoURL',
+                body:reqBody,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -322,17 +842,16 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
 
 
     it('GetBannerImageInfo?EventID', () => {
 
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+        
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventDetails/GetBannerImageInfo?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -340,71 +859,16 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
-
     
-    it('GetPricingDetails', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: 'https://testservices.eventzet.com/api/Pricing/GetPricingDetails',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-        
-    it('GetVideoInfo?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/EventDetails/GetVideoInfo?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
 
 
-    it('GetEventStatus?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/BasicInfo/GetEventStatus?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-    
     it('GetSubimageList?EventID', () => {
 
-        cy.wrap(Cypress.env('authToken')).then((token) => {
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventRegistration/GetSubimageList?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -412,240 +876,44 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    });
-
-    it('GetTicketList?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/AddTicket/GetTicketList?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-    it('GetTicketAddOnList?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/TicketAddOn/GetTicketAddOnList?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-    it('GetPaidTicketTier?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/TicketAddOn/GetPaidTicketTier?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-
-
-    it('SaveTicketTier', () => {
-
-        const reqBody = {
-            TierIDPK:0,
-            EventID:eventID,
-            TierName:"Gold",
-            ModifiedUser:5,
-            IsEventPublished:false,
-            DelStatus:false }
-        
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'POST',
-                url: 'https://testservices.eventzet.com/api/AddTicket/SaveTicketTier',
-                body:reqBody,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
-    });
-
-    it('GetTierList?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/AddTicket/GetTierList?EventID=${eventID}`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-                const firstObject = response.body[0];
-                expect(firstObject.TierIDPK).to.be.a('number');
-                expect(firstObject.TierName).to.equal('Regular');
-                
-            });
-        });
-    }); 
-
-    it('SaveTicketDetails-FreeTicket', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-
-            const reqBody = {
-
-                TicketIDPK: 0,
-                EventID: eventID,
-                TicketTypeID: 276,
-                TierID: 140,
-                PricingID: 1,
-                TicketName: "Free Ticket",
-                Quantity: 100,
-                Price: 0,
-                MaximumTickets: 8,
-                SalesStartDate: "7/10/2024 12:00:00 AM",
-                SalesStartTime: "2/1/1900 12:00:00 PM",
-                SalesEndDate: "7/12/2024 12:00:00 AM",
-                SalesEndTime: "2/1/1900 1:00:00 PM",
-                ShowDatesatCheckout: true,
-                ModifiedUser: 5
-              }
-              
-            cy.request({
-                method: 'POST',
-                url: 'https://testservices.eventzet.com/api/AddTicket/SaveTicketDetails',
-                body: reqBody,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-                
-            });
-        });
-    }); 
+    
 
     
-    it('SaveTicketDetails-PaidTicket', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-
-            const reqBody = {
-                TicketIDPK: 0,
-                EventID: 85,
-                TicketTypeID: 275,
-                TierID: 141,
-                PricingID: 2,
-                TicketName: "Paid Ticket",
-                Quantity: 100,
-                Price: 10,
-                MaximumTickets: 10,
-                SalesStartDate: "7/11/2024 12:00:00 AM",
-                SalesStartTime: "2/1/1900 9:00:00 AM",
-                SalesEndDate: "7/13/2024 12:00:00 AM",
-                SalesEndTime: "2/1/1900 10:00:00 AM",
-                ShowDatesatCheckout: true,
-                ModifiedUser: 5
-            }
-              
-            cy.request({
-                method: 'POST',
-                url: 'https://testservices.eventzet.com/api/AddTicket/SaveTicketDetails',
-                body: reqBody,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-                
-            });
-        });
-    }); 
-
-     it('GetTicketList?EventID', () => {
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
-            cy.request({
-                method: 'GET',
-                url: `https://testservices.eventzet.com/api/AddTicket/GetTicketList?EventID=85`,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-                expect(response.body[0].TicketName).to.equal('Free Ticket');
-                expect(response.body[0].EventTypeID).to.equal(276);
-                expect(response.body[1].TicketName).to.equal('Paid Ticket');
-                expect(response.body[1].EventTypeID).to.equal(275);
-
-            });
-        });
-    });
-
 
    it('SaveCustomerInfo', () => {
 
-        cy.wrap(Cypress.env('authToken')).then((token) => {
+        
 
-            const reqBody =     {
-                CustomerInformation: {
-                    CustomerInfoIDPK: 0,
-                    EventID: 85,
-                    SpecialInstructions: "Please Keep Your Phone Silent ",
-                    Message: "Hy Welcome ",
-                    ReplyToEmail: "",
-                    CustomizeReply: "",
-                    IsCustomerDetailsSaved: True,
-                    ModifiedUser: 5,
-                    IsEventPublished: False
+            const reqBody =   {
+                "CustomerInformation": {
+                  "CustomerInfoIDPK": 0,
+                  "EventID": eventID,
+                  "SpecialInstructions": "No Smoking",
+                  "Message": "Hy all",
+                  "ReplyToEmail": "",
+                  "CustomizeReply": "",
+                  "IsCustomerDetailsSaved": true,
+                  "ModifiedUser": userID,
+                  "IsEventPublished": false
                 },
-                Questions: [
-                    {
-                        QuestionIDPK: 0,
-                        Question: "Enter your age ?",
-                        DelStatus: False
-                    }
+                "Questions": [
+                  {
+                    "QuestionIDPK": 0,
+                    "Question": "Please enter your age?",
+                    "Answer": "",
+                    "RequiredQuestion": false,
+                    "DelStatus": false
+                  }
                 ]
-            }
+              };
+              
               
             cy.request({
                 method: 'POST',
                 url: 'https://testservices.eventzet.com/api/CustomerInfo/SaveCustomerInfo',
                 body: reqBody,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -654,73 +922,191 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 
             });
         });
-    }); 
 
 
-    it('GetEventPublishWrapper', () => {
+        it('GetSubimageList?EventID', () => {
 
-        const reqBody ={
-
-            EventDataType: "EventDataType",
-            State: "State",
-            RefundPolicy: "RefundPolicy",
-            EventTax: "EventTax",
-            EventAccessibility: "EventAccessibility",
-            PublishType: "PublishType",
-            EventStatus: "EventStatus",
-            EventApprovalStatus: "EventApprovalStatus"
-        }
-
-        cy.wrap(Cypress.env('authToken')).then((token) => {
             cy.request({
-                method: 'POST',
-                url: `https://testservices.eventzet.com/api/EventPublishWrapper/GetEventPublishWrapper`,
-                body:reqBody,
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/EventRegistration/GetSubimageList?EventID=${eventID}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
                 expect(response.duration).to.be.below(3000);
                 expect(response.statusText).to.equal('OK');
-
             });
         });
-    });
+
+
+        it('GetEventPublishList?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/Publish/GetEventPublishList?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+
+        it('GetEventDetails?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/BasicInfo/GetEventDetails?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+
+
+        it('GetEventTimeSlots?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/Timeslot/GetEventTimeSlots?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+
+        it('GetEventPublishWrapper', () => {
+
+    
+            const reqBody =  {
+                "EventDataType": "EventDataType",
+                "State": "State",
+                "RefundPolicy": "RefundPolicy",
+                "EventTax": "EventTax",
+                "EventAccessibility": "EventAccessibility",
+                "PublishType": "PublishType",
+                "EventStatus": "EventStatus",
+                "EventApprovalStatus": "EventApprovalStatus"
+              }
+              
+              
+              
+            cy.request({
+                method: 'POST',
+                url: 'https://testservices.eventzet.com/api/EventPublishWrapper/GetEventPublishWrapper',
+                body: reqBody,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+                
+            });
+        });
+
+
+        
+        it('GetEventTags?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/BasicInfo/GetEventTags?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+        
+        it('GetEventInfo?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/Publish/GetEventInfo?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+        it('GetPublishDetails?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/Publish/GetPublishDetails?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+        it('GetEventLocation?EventID', () => {
+
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/BasicInfo/GetEventLocation?EventID=${eventID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+
 
 
 it('SavePublishData', () => {
 
     const reqBody  = {
-
-        PublishDetailsIDPK: null,
-        EventID: 85,
-        RefundRequst: null,
-        IsEventPublishDetailsSaved: true,
-        RefundPolicyID: 0,
-        RefundPolicy: null,
-        IsServiceChargeGivenByEventCreator: null,
-        IsNeedToChargeTax: null,
-        ModifiedUser: 5,
-        EventTaxInfo: {
-            EventTaxID: 0,
-            EventID: 85,
-            EventOwnerID: 5,
-            StateID: 0,
-            State: "",
-            SalesTaxID: "",
-            TaxName: "",
-            TaxRate: 0
-        }
-    }
-
-    cy.wrap(Cypress.env('authToken')).then((token) => {
+        "PublishDetailsIDPK": null,
+        "EventID": 30,
+        "RefundRequst": true,
+        "IsEventPublishDetailsSaved": true,
+        "RefundPolicyID": 355,
+        "RefundPolicy": null,
+        "IsServiceChargeGivenByEventCreator": null,
+        "IsNeedToChargeTax": null,
+        "ModifiedUser": 2,
+        "EventTaxInfo": null
+      }
+      
         cy.request({
             method: 'POST',
             url: 'https://testservices.eventzet.com/api/Publish/SavePublishData',
             body:reqBody,
             headers: {
-                'Authorization': `Bearer ${token}`
+                Authorization: `Bearer ${authToken}`
             }
         }).then((response) => {
             expect(response.status).to.equal(200);
@@ -729,54 +1115,65 @@ it('SavePublishData', () => {
 
         });
      });
-  });
 
 
+     it('EventStatusChange?EventID&ModifiedUser', () => {
 
+       
+            cy.request({
+                method: 'PUT',
+                url: `https://testservices.eventzet.com/api/Publish/EventStatusChange?EventID=${eventID}&ModifiedUser=${userID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+    
+            });
+         });
 
-it('SavePublishData', () => {
+         it('MyEventsWrapper?UserID', () => {
 
-    const reqBody  = {
-
-        PublishDetailsIDPK: null,
-        EventID: 85,
-        RefundRequst: null,
-        IsEventPublishDetailsSaved: true,
-        RefundPolicyID: 0,
-        RefundPolicy: null,
-        IsServiceChargeGivenByEventCreator: null,
-        IsNeedToChargeTax: null,
-        ModifiedUser: 5,
-        EventTaxInfo: {
-            EventTaxID: 0,
-            EventID: 85,
-            EventOwnerID: 5,
-            StateID: 0,
-            State: "",
-            SalesTaxID: "",
-            TaxName: "",
-            TaxRate: 0
-        }
-    }
-
-    cy.wrap(Cypress.env('authToken')).then((token) => {
-        cy.request({
-            method: 'POST',
-            url: 'https://testservices.eventzet.com/api/Publish/SavePublishData',
-            body:reqBody,
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }).then((response) => {
-            expect(response.status).to.equal(200);
-            expect(response.duration).to.be.below(3000);
-            expect(response.statusText).to.equal('OK');
-
+            cy.request({
+                method: 'GET',
+                url: `https://testservices.eventzet.com/api/MyEvents/MyEventsWrapper?UserID=${userID}`,
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
         });
-     });
-  });
 
- });
+
+        it('DeleteDashboardEvent?EventID', () => {
+        
+            cy.request({
+                method: 'DELETE',
+                url: `https://testservices.eventzet.com/api/DashboardEventList/DeleteDashboardEvent?EventID=${eventID}&ModifiedUser=${userID}`,
+                headers: {
+                     Authorization: `Bearer ${authToken}`
+                }
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                expect(response.duration).to.be.below(3000);
+                expect(response.statusText).to.equal('OK');
+            });
+        });
+
+
+
+     });
+
+
+
+
+
+
 
 
 

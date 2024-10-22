@@ -1,4 +1,6 @@
 describe('Api Testing in the eventzet event details component', () => {
+
+    let authToken;
   
     before(() => {
       

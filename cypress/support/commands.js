@@ -31,19 +31,20 @@
 
 /// <reference types='Cypress'/>
 
-Cypress.Commands.add('getToken', () => {
 
-  let authToken;
+Cypress.Commands.add('getToken', () => {
   return cy.request({
     method: 'GET',
     url: 'https://testservices.eventzet.com/api/Login/GetToken?AuthUID=e3b1d5bb-5f8e-4bae-80fb-e4db9f425d11',
   }).then((response) => {
     if (response.status !== 200) {
-      throw new Error(`Failed to retrieve token Status: ${response.status}`);
+      throw new Error(`Failed to retrieve token. Status: ${response.status}`);
     }
 
-    Cypress.env('authToken', response.body);
-    cy.log('Token retrieved:',authToken);
-  
+    // Assuming the token is in the response body directly
+    const authToken = response.body; // Adjust this based on the actual response structure
+    Cypress.env('authToken', authToken);
+    return authToken; // Return the token for further use
   });
 });
+
