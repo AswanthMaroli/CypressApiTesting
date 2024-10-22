@@ -1,11 +1,17 @@
 describe('Api Testing in the eventzet dashboard component', () => {
   
+    let authToken;
+    const userID=2;
+    
     before(() => {
-        
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
-    const userID=2;
+
+   
   
     it('GetDashBoardWrapper', () => {
         
@@ -14,7 +20,7 @@ describe('Api Testing in the eventzet dashboard component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventDashboardWrapper/GetDashBoardWrapper?StartDate=&EndDate=&DateToday=10-21-2024&Months=10&UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 },
                 timeout: 60000
             }).then((response) => {

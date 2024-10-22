@@ -1,11 +1,15 @@
 describe('Api Testing in the eventzet order details component', () => {
   
+    const eventRegID=379;
+    let authToken;
+
     before(() => {
       
-        return cy.getToken(); 
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
-    const eventRegID=379;
 
     it('GetEventRegInfo', () => {
       

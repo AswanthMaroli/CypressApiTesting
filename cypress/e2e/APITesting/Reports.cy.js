@@ -1,11 +1,16 @@
 describe('Api Testing in the eventzet reports component', () => {
-  
+    
+    const userID=2;
+    let authToken;
+
     before(() => {
-     
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
-    const userID=2;
+
 
     it('GetEvents', () => {
         
@@ -14,7 +19,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventList/GetEvents?UserID=${userID}`,
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -32,7 +37,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AtndList/GetAtndList?UserID=${userID}`,
                 headers: {
-                  'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -50,7 +55,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/BookingListReport/GetBookingList?UserID=${userID}`,
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                        Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -68,7 +73,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventSummary/GetEventSummary?UserID=${userID}`,
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                       Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -85,7 +90,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/Transaction/GetTransactionList?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -102,7 +107,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/OrgList/GetOrgReport?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -120,7 +125,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EarningsByTicketTypeReport/GetEarningsByTicketType?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -138,7 +143,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/Toppurchasers/GetToppurchaser?UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -156,7 +161,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/PaidByInvoice/Getpaidbyinvoice?UserID=${userID}`,
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -174,7 +179,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/Payouts/GetPayouts?UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -191,7 +196,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AddOnsList/GetAddOns?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -209,7 +214,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/GuestList/GetGuestList?UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -228,7 +233,7 @@ describe('Api Testing in the eventzet reports component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/RefundRequest/GetRefundRqstList?UserID=${userID}`,
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                        Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

@@ -1,8 +1,12 @@
 describe('Api Testing in the eventzet home component', () => {
   
+    let authToken;
+
     before(() => {
-       
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
   
     it('GetEventHomeWrapper', () => {
@@ -12,7 +16,7 @@ describe('Api Testing in the eventzet home component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/EventHomeWrapper/GetEventHomeWrapper?Lat=0&Lng=0&Range=5',
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -30,7 +34,7 @@ describe('Api Testing in the eventzet home component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=${userId}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

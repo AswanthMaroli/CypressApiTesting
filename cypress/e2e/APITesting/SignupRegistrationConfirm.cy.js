@@ -1,9 +1,12 @@
 describe('Api Testing in the eventzet Signup Registration Confirm component', () => {
 
+ let authToken;
   before(() => {
-
-    return cy.getToken();
-  });
+      
+    cy.getToken().then((token) => {
+        authToken = token; // Store retrieved token for authorization
+    });
+});
 
 
   const signUpID = 2;
@@ -62,7 +65,7 @@ describe('Api Testing in the eventzet Signup Registration Confirm component', ()
         url: 'https://testservices.eventzet.com/api/SignUpRegUser/SaveSignUpRegUser',
         body: signUpData,
         headers: {
-          'Authorization': `Bearer ${Cypress.env('authToken')}`
+          Authorization: `Bearer ${authToken}`
         }
       }).then((response) => {
         expect(response.status).to.equal(200);
@@ -80,7 +83,7 @@ describe('Api Testing in the eventzet Signup Registration Confirm component', ()
         method: 'GET',
         url: `https://testservices.eventzet.com/api/SignupRegistrationConfirm/GetRegistrationConfirm?SignUpRegID=${signupRegID}`,
         headers: {
-           'Authorization': `Bearer ${Cypress.env('authToken')}`
+           Authorization: `Bearer ${authToken}`
         }
       }).then((response) => {
         expect(response.status).to.equal(200);
@@ -97,7 +100,7 @@ describe('Api Testing in the eventzet Signup Registration Confirm component', ()
         method: 'GET',
         url: `https://testservices.eventzet.com/api/SignUpDesign/GetSignUpDetails?SignUpID=${signUpID}`,
         headers: {
-          'Authorization': `Bearer ${Cypress.env('authToken')}`
+          Authorization: `Bearer ${authToken}`
         }
       }).then((response) => {
         expect(response.status).to.equal(200);

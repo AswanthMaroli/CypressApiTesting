@@ -1,13 +1,17 @@
 describe('Api Testing in the eventzet Create Event component', () => {
 
     let eventID = '';
-  
+    let authToken;
+    const userID=2;
     before(() => {
-        
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
-    const userID=2;
+
+
   
     it('SaveEvent', () => {
         

@@ -1,9 +1,13 @@
 describe('Api Testing in the Search Event component', ()=>{
 
   
+    let authToken;
+
     before(() => {
-     
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
     it('GetEventSearchWrapper',()=>{
@@ -25,7 +29,7 @@ describe('Api Testing in the Search Event component', ()=>{
                    url   :'https://testservices.eventzet.com/api/EventSearchWrapper/GetEventSearchWrapper',
                    body  :requestBody,
                    headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response)=>{
    

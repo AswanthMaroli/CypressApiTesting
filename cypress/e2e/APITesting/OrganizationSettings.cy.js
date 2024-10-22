@@ -1,11 +1,13 @@
 describe('Api Testing in the eventzet organization settings component', () => {
 
-    before(() => {
-
-        return cy.getToken();
-    });
-
     const userID = 2;
+    let authToken;
+    before(() => {
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
+    });
 
     it('GetOrganizationDetails', () => {
 
@@ -14,7 +16,7 @@ describe('Api Testing in the eventzet organization settings component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/Organization/GetOrganizationDetails?UserID=${userID}`,
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -43,7 +45,7 @@ describe('Api Testing in the eventzet organization settings component', () => {
                     }
                 ],
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

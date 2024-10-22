@@ -1,11 +1,14 @@
 describe('Api Testing in the eventzet Permission component', () => {
   
+    const userID = 2;
+    let authToken;
     before(() => {
-       
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
-
-    const userID=2;
+    
 
 
     it('GetEvents?UserID', () => {
@@ -15,7 +18,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventList/GetEvents?UserID=${userID}`,
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -34,7 +37,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=AccessibilityType',
                 headers: {
-                 'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -51,7 +54,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=PermissionType',
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -68,7 +71,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=PermissionAcceptanceType',
                 headers: {
-                'Authorization': `Bearer ${Cypress.env('authToken')}`
+                  Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -85,7 +88,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/DashboardEventList/GetDashboardEventList?UserID=${userID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -102,7 +105,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/Permission/GetMyPermissions?UserID=${userID}`,
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -119,7 +122,7 @@ describe('Api Testing in the eventzet Permission component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/Permission/GetReceivedPermissions?UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

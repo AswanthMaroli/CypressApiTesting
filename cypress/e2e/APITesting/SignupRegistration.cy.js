@@ -1,12 +1,16 @@
 describe('Api Testing in the eventzet Signup Registration component', () => {
   
-    before(() => {
-       
-        return cy.getToken(); 
-    });
-
     const userID=2;
     const signUpID=116
+    let authToken;
+
+    before(() => {
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
+    });
+
 
 
         
@@ -36,7 +40,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/SignUpSettings/GetQuestions?SignUpID=${signUpID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -54,7 +58,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/SignUpRegUser/GetSlotDetailsByDateandSlot?SignUpID=${signUpID}&SignUpRegID=0`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -72,7 +76,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=SlotType',
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                       Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -89,7 +93,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=RSVPResponseStatus',
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                       Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -107,7 +111,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=State',
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -124,7 +128,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=Gender',
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -141,7 +145,7 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/SignUpDesign/GetSignUpDetails?SignUpID=${signUpID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                       Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -149,7 +153,4 @@ describe('Api Testing in the eventzet Signup Registration component', () => {
                 expect(response.statusText).to.equal('OK');
             });
         });
-    
-
-
 });

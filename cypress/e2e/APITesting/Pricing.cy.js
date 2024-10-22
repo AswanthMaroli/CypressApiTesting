@@ -1,11 +1,16 @@
 describe('Api Testing in the eventzet Pricing component', () => {
-  
+    
+    const userID =2;
+    let authToken;
+   
     before(() => {
-       
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
-    const userID =2;
+  
 
 
     it('GetPricingDetails', () => {
@@ -15,7 +20,7 @@ describe('Api Testing in the eventzet Pricing component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Pricing/GetPricingDetails',
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -33,7 +38,7 @@ describe('Api Testing in the eventzet Pricing component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -51,7 +56,7 @@ describe('Api Testing in the eventzet Pricing component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Pricing/GetAddOnPricingDetails',
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

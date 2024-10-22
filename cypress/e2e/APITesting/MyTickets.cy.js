@@ -1,11 +1,14 @@
 describe('Api Testing in the eventzet My Tickets  component', () => {
   
-    before(() => {
-       
-        return cy.getToken(); 
-    });
-
+    let authToken;
     const userID=2;
+    before(() => {
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
+    });
+    
 
   
     it('GetUserTickets', () => {
@@ -15,7 +18,7 @@ describe('Api Testing in the eventzet My Tickets  component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/MyTickets/GetUserTickets?UserID=${userID}`,
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -32,7 +35,7 @@ describe('Api Testing in the eventzet My Tickets  component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/EventSummary/GetEventSummary?UserID=${userID}`,
                 headers: {
-                     'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

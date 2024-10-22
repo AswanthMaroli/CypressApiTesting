@@ -1,14 +1,18 @@
 describe('Api Testing in the eventzet  signup message component', () => {
   
-    before(() => {
-     
-        return cy.getToken(); 
-    });
-
     const signUpID=2;
     const userID =2;
-  
     var shortUrl='';
+    let authToken;
+
+    before(() => {
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
+    });
+
+  
 
     it('GetSignUpList?UserID', () => {
         
@@ -17,7 +21,7 @@ describe('Api Testing in the eventzet  signup message component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/MySignUps/GetSignUpList?UserID=${userID}`,
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                       Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -36,7 +40,7 @@ describe('Api Testing in the eventzet  signup message component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/SignUpPublish/GetSignUpShortURL?SignUpID=${signUpID}`,
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -67,7 +71,7 @@ describe('Api Testing in the eventzet  signup message component', () => {
                 url: 'https://testservices.eventzet.com/api/Message/SignupEMail',
                 body: requestBody,
                 headers: {
-                      'Authorization': `Bearer ${Cypress.env('authToken')}`
+                      Authorization: `Bearer ${authToken}`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);

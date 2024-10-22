@@ -1,8 +1,12 @@
 describe('Api Testing in the eventzet Account Settings component', () => {
+
+    let authToken;
   
     before(() => {
-  
-        return cy.getToken(); 
+      
+        cy.getToken().then((token) => {
+            authToken = token; // Store retrieved token for authorization
+        });
     });
 
     const userID=2;
@@ -15,7 +19,7 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=LoginType',
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                     Authorization: `Bearer ${ authToken }`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -31,7 +35,7 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=Gender',
                 headers: {
-                    'Authorization': `Bearer ${Cypress.env('authToken')}`
+                    Authorization: `Bearer ${ authToken }`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -48,7 +52,7 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/Category/GetCategoryByTypeName?CategoryTypeName=State',
                 headers: {
-                 'Authorization': `Bearer ${Cypress.env('authToken')}`
+                  Authorization: `Bearer ${ authToken }`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -63,7 +67,7 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=${userID}`,
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${ authToken }`
                 }
             }).then((response) => {
                 expect(response.status).to.equal(200);
@@ -78,11 +82,11 @@ describe('Api Testing in the eventzet Account Settings component', () => {
                 method: 'GET',
                 url: 'https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=999',
                 headers: {
-                   'Authorization': `Bearer ${Cypress.env('authToken')}`
+                   Authorization: `Bearer ${ authToken }`
                 },
                 failOnStatusCode: false
             }).then((response) => {
-                expect(response.status).to.equal(200);  // need to get 404 not found but geeting 200  response is null array
+                expect(response.status).to.equal(200);  // need to get eroor  but geeting 200, response is null array
                 expect(response.duration).to.be.below(3000);
                 expect(response.body).to.be.an('array');
                
