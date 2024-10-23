@@ -90,10 +90,11 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
                 expect(response.body).to.have.property('ID').and.not.eq(0);
                 eventID = response.body.ID;
+                cy.writeFile('cypress/fixtures/SavedDatas.json', { eventID });
+                cy.log(eventID);
                 cy.log(eventID);
             });
         });
-
 
 
         it('SaveEventVenues', () => {

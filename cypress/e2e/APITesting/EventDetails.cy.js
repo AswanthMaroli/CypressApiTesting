@@ -1,22 +1,28 @@
 describe('Api Testing in the eventzet event details component', () => {
 
     let authToken;
+    
+    let eventID;
+    const userID =2;
   
     before(() => {
       
         cy.getToken().then((token) => {
             authToken = token; // Store retrieved token for authorization
         });
+
+        cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+            eventID = data.eventID;
+        });
+
     });
   
-    const eventID=21;
-    const userID =2;
 
 
     
     it('GetAccountDetails?UserID', () => {
       
-      
+    
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/AccountSettings/GetAccountDetails?UserID=${userID}`,

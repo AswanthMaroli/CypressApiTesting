@@ -3,7 +3,7 @@ describe('Api Testing in the eventzet booking list component', () => {
 
     
     const userID=2;
-    const eventID=21;
+    let eventID;
     let authToken;
   
     before(() => {
@@ -11,12 +11,16 @@ describe('Api Testing in the eventzet booking list component', () => {
         cy.getToken().then((token) => {
             authToken = token; // Store retrieved token for authorization
         });
+
+        cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+            eventID = data.eventID;
+        });
+
     });
 
   
     it('GetEventList', () => {
         
-       
             cy.request({
                 method: 'GET',
                 url: `https://testservices.eventzet.com/api/BookingList/GetEventList?UserID=${userID}`,
