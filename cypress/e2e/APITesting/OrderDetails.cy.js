@@ -77,8 +77,7 @@ describe('Api Testing in the eventzet order details component', () => {
             }).then((response) => {
                 expect(response.status).to.equal(200);
                 expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK'); // order number 
-            
+                expect(response.statusText).to.equal('OK'); 
         });
     });
   
