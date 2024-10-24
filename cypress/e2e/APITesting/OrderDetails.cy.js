@@ -81,7 +81,7 @@ describe('Api Testing in the eventzet order details component', () => {
         });
     });
   
-    it('GetOrderDetailsWrapper', () => {0 
+    it('GetOrderDetailsWrapper', () => {
  
             cy.request({
                 method: 'GET',
