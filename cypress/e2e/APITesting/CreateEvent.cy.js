@@ -90,8 +90,10 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.statusText).to.equal('OK');
                 expect(response.body).to.have.property('ID').and.not.eq(0);
                 eventID = response.body.ID;
-                cy.writeFile('cypress/fixtures/SavedDatas.json', { eventID });
-                cy.log(eventID);
+                cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+                    data.eventID = eventID; // Update eventID
+                    cy.writeFile('cypress/fixtures/SavedDatas.json', data); // Save the updated data
+                });
                 cy.log(eventID);
             });
         });
@@ -276,6 +278,10 @@ describe('Api Testing in the eventzet Create Event component', () => {
                     expect(response.statusText).to.equal('OK');
                     expect(response.body[0]).to.have.property('VenueID').and.not.eq(0);
                     venueID=response.body[0].VenueID;
+                    cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+                        data.venueID = venueID; // Update eventID
+                        cy.writeFile('cypress/fixtures/SavedDatas.json', data); // Save the updated data
+                    });
                 });
             });
 
@@ -431,6 +437,10 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.duration).to.be.below(3000);
                 expect(response.statusText).to.equal('OK');
                 levelID = response.body[1].TierID;
+                cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+                    data.levelID = levelID; // Update eventID
+                    cy.writeFile('cypress/fixtures/SavedDatas.json', data); // Save the updated data
+                });
             });
         });
 
@@ -553,6 +563,10 @@ describe('Api Testing in the eventzet Create Event component', () => {
             expect(response.duration).to.be.below(3000);
             expect(response.statusText).to.equal('OK');
             timeSlotID = response.body[0].SlotID;
+            cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+                data.timeSlotID = timeSlotID; // Update eventID
+                cy.writeFile('cypress/fixtures/SavedDatas.json', data); // Save the updated data
+            });
         });
     });
 
@@ -632,6 +646,10 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.duration).to.be.below(3000);
                 expect(response.statusText).to.equal('OK');
                 ticketID = response.body[0].TicketIDPK;
+                cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+                    data.ticketID = ticketID; // Update eventID
+                    cy.writeFile('cypress/fixtures/SavedDatas.json', data); // Save the updated data
+                });
             });
         });
 
@@ -675,6 +693,7 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.duration).to.be.below(6000);
                 expect(response.statusText).to.equal('OK');
                 expect(response.body).to.have.property('ID').and.not.eq(0);
+              
             });
         });
 
@@ -693,6 +712,12 @@ describe('Api Testing in the eventzet Create Event component', () => {
                 expect(response.status).to.equal(200);
                 expect(response.duration).to.be.below(3000);
                 expect(response.statusText).to.equal('OK');
+                addonID = response.body[0].AddOnID;
+                cy.readFile('cypress/fixtures/SavedDatas.json').then((data) => {
+                    data.addonID = addonID; // Update eventID
+                    cy.writeFile('cypress/fixtures/SavedDatas.json', data); // Save the updated data
+                });
+
             });
         });
     
@@ -1151,20 +1176,20 @@ it('SavePublishData', () => {
         });
 
 
-        it('DeleteDashboardEvent?EventID', () => {
+    //     it('DeleteDashboardEvent?EventID', () => {
         
-            cy.request({
-                method: 'DELETE',
-                url: `https://testservices.eventzet.com/api/DashboardEventList/DeleteDashboardEvent?EventID=${eventID}&ModifiedUser=${userID}`,
-                headers: {
-                     Authorization: `Bearer ${authToken}`
-                }
-            }).then((response) => {
-                expect(response.status).to.equal(200);
-                expect(response.duration).to.be.below(3000);
-                expect(response.statusText).to.equal('OK');
-            });
-        });
+    //         cy.request({
+    //             method: 'DELETE',
+    //             url: `https://testservices.eventzet.com/api/DashboardEventList/DeleteDashboardEvent?EventID=${eventID}&ModifiedUser=${userID}`,
+    //             headers: {
+    //                  Authorization: `Bearer ${authToken}`
+    //             }
+    //         }).then((response) => {
+    //             expect(response.status).to.equal(200);
+    //             expect(response.duration).to.be.below(3000);
+    //             expect(response.statusText).to.equal('OK');
+    //         });
+    //     });
 
 
 

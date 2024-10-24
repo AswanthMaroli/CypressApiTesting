@@ -116,4 +116,24 @@ describe('API Testing in the Login component', () => {
         });
     });
 
+
+    
+    it('Verify Login with SQL Injection Attack', () => {
+
+        const requestBody = {
+            Email: "' OR '1'='1",
+            Password: "' OR '1'='1"
+        };
+
+        cy.request({
+            method: 'POST',
+            url: `${baseUrl}/Authenticate`,
+            body: requestBody,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.equal(204);
+            expect(response.body).to.be.undefined;  // not logined 
+        });
+    });
+
 });
